@@ -1,0 +1,26 @@
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: datamind-backend
+    ports:
+      - "8765:8000"
+    volumes:
+      - ./backend/data:/app/data
+    environment:
+      - JAVA_HOST=http://java-service:8080
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        - VITE_API_BASE_URL=http://localhost:8765
+    container_name: datamind-frontend
+    ports:
+      - "3456:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
